@@ -26,6 +26,8 @@ public class Player : MonoBehaviour {
     private UIManager _uIManager;
     [SerializeField]
     private GameObject _weapon;
+    [SerializeField]
+    private bool _hasWeapon = false;
     // Start is called before the first frame update
     void Start()
     {
@@ -40,7 +42,7 @@ public class Player : MonoBehaviour {
     void Update()
     {
        
-        if (Input.GetMouseButton(0) && _currentAmmo > 0 && _isReloading == false)
+        if (Input.GetMouseButton(0) && _currentAmmo > 0 && _isReloading == false && _hasWeapon == true)
         {
             Shoot();
         }
@@ -76,6 +78,13 @@ public class Player : MonoBehaviour {
             Debug.Log("Hit: " + hitInfo.transform.name);
             GameObject hitMarker = Instantiate(_hitMarkerPrefab, hitInfo.point, Quaternion.LookRotation(hitInfo.normal));
             Destroy(hitMarker, 1f);
+
+            Destructible crate = hitInfo.transform.GetComponent<Destructible>();
+            if (crate != null)
+            {
+                crate.DestroyCrate();
+            }
+
         }
     }
 
@@ -116,6 +125,7 @@ public class Player : MonoBehaviour {
     public void EnableWeapons()
     {
         _weapon.SetActive(true);
+        _hasWeapon = true;
     }
 
 
